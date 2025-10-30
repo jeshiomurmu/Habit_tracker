@@ -1,0 +1,22 @@
+# HabitFlow - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core Framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Forms & Security
+Flask-WTF==1.2.1
+WTForms==3.1.1
+
+# HTTP Requests (for AI APIs)
+requests==2.31.0
+
+# Environment Configuration
+python-dotenv==1.0.0
+
+# Production Server (optional, for deployment)
+gunicorn==21.2.0
+
+# Development Tools (optional)
+python-decouple==3.8
