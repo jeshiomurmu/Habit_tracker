@@ -1,0 +1,689 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - HabitFlow{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 24px;
+        margin-top: 24px;
+    }
+    
+    .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .stat-value {
+        font-size: 36px;
+        font-weight: 700;
+        color: #6366f1;
+        margin: 8px 0;
+    }
+    
+    .stat-label {
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    .card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .card-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    
+    .habit-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .habit-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        border-radius: 12px;
+        padding: 16px;
+        border-left: 4px solid #6366f1;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .habit-card:hover {
+        transform: translateX(4px);
+        box-shadow: 0 4px 12px rgba(99,102,241,0.15);
+    }
+    
+    .habit-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 8px;
+    }
+    
+    .habit-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .habit-icon {
+        font-size: 20px;
+    }
+    
+    .habit-stats {
+        display: flex;
+        gap: 16px;
+        font-size: 13px;
+        color: #64748b;
+        margin-top: 8px;
+    }
+    
+    .habit-stat {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .habit-desc {
+        font-size: 13px;
+        color: #64748b;
+        margin-top: 4px;
+    }
+    
+    .streak-badge {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .btn {
+        background: #6366f1;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 14px;
+    }
+    
+    .btn:hover {
+        background: #4f46e5;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(99,102,241,0.3);
+    }
+    
+    .btn-secondary {
+        background: #f1f5f9;
+        color: #0f172a;
+    }
+    
+    .btn-secondary:hover {
+        background: #e2e8f0;
+    }
+    
+    .btn-full {
+        width: 100%;
+    }
+    
+    .form-group {
+        margin-bottom: 16px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 500;
+        font-size: 14px;
+        color: #0f172a;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: inherit;
+        transition: border-color 0.2s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #6366f1;
+    }
+    
+    .suggestion-card {
+        background: linear-gradient(135deg, rgba(99,102,241,0.05) 0%, rgba(139,92,246,0.05) 100%);
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .suggestion-card:hover {
+        background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(139,92,246,0.1) 100%);
+        transform: translateX(4px);
+    }
+    
+    .suggestion-text {
+        font-size: 14px;
+        color: #334155;
+    }
+    
+    .add-suggestion-btn {
+        background: #6366f1;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        background: white;
+        border-radius: 20px;
+        padding: 32px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease;
+    }
+    
+    .modal-title {
+        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: 700;
+    }
+    
+    .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    .button-flex {
+        flex: 1;
+    }
+    
+    .quick-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 16px;
+    }
+    
+    .reminders-container {
+        margin-top: 16px;
+        font-size: 13px;
+        color: #64748b;
+    }
+    
+    .reminder-item {
+        padding: 8px;
+        background: #f1f5f9;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .reminder-title {
+        font-weight: 600;
+    }
+    
+    .reminder-time {
+        font-size: 11px;
+    }
+    
+    .ai-input-container {
+        margin-top: 16px;
+    }
+    
+    .ai-input {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .loading-container {
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .error-message {
+        color: #ef4444;
+    }
+    
+    @keyframes fadeIn {
+        from { 
+            opacity: 0; 
+        }
+        to { 
+            opacity: 1; 
+        }
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #64748b;
+    }
+    
+    .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
+    
+    .empty-state-title {
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+    
+    .empty-state-btn {
+        margin-top: 16px;
+    }
+    
+    .card-spacing {
+        margin-top: 16px;
+    }
+    
+    @media (max-width: 968px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stats-bar">
+    <div class="stat-card">
+        <div class="stat-label">Total Habits</div>
+        <div class="stat-value">{{ total_habits }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Completed Today</div>
+        <div class="stat-value">{{ completed_today }}/{{ total_habits }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Success Rate</div>
+        <div class="stat-value">{{ ((completed_today / total_habits * 100) if total_habits > 0 else 0)|round }}%</div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div>
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Your Habits</h2>
+                <button class="btn" onclick="openCreateModal()">+ New Habit</button>
+            </div>
+            
+            <div class="habit-list">
+                {% if habits %}
+                    {% for habit in habits %}
+                    <div class="habit-card" data-habit-id="{{ habit.id }}">
+                        <div class="habit-header">
+                            <div>
+                                <div class="habit-title">
+                                    <span class="habit-icon">{{ habit.icon }}</span>
+                                    {{ habit.title }}
+                                </div>
+                                <div class="habit-desc">
+                                    {{ habit.description or 'No description' }}
+                                </div>
+                            </div>
+                            {% if habit.streak > 0 %}
+                            <span class="streak-badge">🔥 {{ habit.streak }} day{% if habit.streak != 1 %}s{% endif %}</span>
+                            {% endif %}
+                        </div>
+                        <div class="habit-stats">
+                            <div class="habit-stat">
+                                <span>📊</span>
+                                <span>{{ habit.completion_rate }}% this month</span>
+                            </div>
+                            <div class="habit-stat">
+                                <span>✓</span>
+                                <span>{{ habit.total_checkins }} total</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎯</div>
+                        <h3 class="empty-state-title">No habits yet!</h3>
+                        <p>Create your first habit to get started</p>
+                        <button class="btn empty-state-btn" onclick="openCreateModal()">Create First Habit</button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">🤖 AI Suggestions</h3>
+            </div>
+            
+            <div id="suggestions-list">
+                {% for suggestion in suggestions %}
+                <div class="suggestion-card" data-suggestion="{{ suggestion }}">
+                    <span class="suggestion-text">{{ suggestion }}</span>
+                    <button class="add-suggestion-btn">Add</button>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="ai-input-container">
+                <input type="text" id="ai-prompt" class="ai-input" placeholder="Ask AI for habit suggestions...">
+                <button class="btn btn-full" onclick="getAISuggestions()">✨ Get AI Suggestions</button>
+            </div>
+        </div>
+        
+        <div class="card card-spacing">
+            <h3 class="card-title">⚡ Quick Actions</h3>
+            <div class="quick-actions">
+                <button class="btn btn-secondary" onclick="exportData()">📥 Export Data</button>
+                <button class="btn btn-secondary" onclick="checkReminders()">🔔 Check Reminders</button>
+            </div>
+            <div id="reminders-list" class="reminders-container"></div>
+        </div>
+    </div>
+</div>
+
+<div id="create-modal" class="modal">
+    <div class="modal-content">
+        <h2 class="modal-title">Create New Habit</h2>
+        <form id="create-form">
+            <div class="form-group">
+                <label>Title *</label>
+                <input type="text" name="title" required placeholder="e.g., Morning Exercise">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="3" placeholder="Optional details..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category">
+                    <option value="personal">Personal</option>
+                    <option value="health">Health & Fitness</option>
+                    <option value="learning">Learning</option>
+                    <option value="productivity">Productivity</option>
+                    <option value="mindfulness">Mindfulness</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Times per day</label>
+                <select name="frequency">
+                    <option value="1">Once</option>
+                    <option value="2">Twice</option>
+                    <option value="3">Three times</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Reminder Time (optional)</label>
+                <input type="time" name="reminder_time">
+            </div>
+            <div class="form-group">
+                <label>Color</label>
+                <input type="color" name="color" value="#6366f1">
+            </div>
+            <div class="form-group">
+                <label>Icon</label>
+                <select name="icon">
+                    <option value="⭐">⭐ Star</option>
+                    <option value="🎯">🎯 Target</option>
+                    <option value="💪">💪 Strong</option>
+                    <option value="📚">📚 Book</option>
+                    <option value="🏃">🏃 Run</option>
+                    <option value="🧘">🧘 Meditate</option>
+                    <option value="💡">💡 Idea</option>
+                    <option value="🌱">🌱 Growth</option>
+                    <option value="✍️">✍️ Write</option>
+                    <option value="🎨">🎨 Create</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button type="submit" class="btn button-flex">Create Habit</button>
+                <button type="button" class="btn btn-secondary" onclick="closeCreateModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    function openCreateModal() {
+        document.getElementById('create-modal').classList.add('active');
+    }
+    
+    function closeCreateModal() {
+        document.getElementById('create-modal').classList.remove('active');
+    }
+    
+    window.openCreateModal = openCreateModal;
+    window.closeCreateModal = closeCreateModal;
+    
+    document.getElementById('create-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(e.target);
+        var data = {};
+        formData.forEach(function(value, key) {
+            data[key] = value;
+        });
+        
+        fetch('/habits/create', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(function(response) {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Failed to create habit');
+            }
+        })
+        .catch(function(error) {
+            alert('Error: ' + error.message);
+        });
+    });
+    
+    function getAISuggestions() {
+        var prompt = document.getElementById('ai-prompt').value || 'Suggest habits';
+        var container = document.getElementById('suggestions-list');
+        container.innerHTML = '<div class="loading-container">⏳ Generating suggestions...</div>';
+        
+        fetch('/api/ai/suggestions', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({prompt: prompt})
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            container.innerHTML = '';
+            data.suggestions.forEach(function(suggestion) {
+                var div = document.createElement('div');
+                div.className = 'suggestion-card';
+                div.setAttribute('data-suggestion', suggestion);
+                div.innerHTML = '<span class="suggestion-text">' + suggestion + '</span><button class="add-suggestion-btn">Add</button>';
+                div.addEventListener('click', function() {
+                    addSuggestion(suggestion);
+                });
+                container.appendChild(div);
+            });
+        })
+        .catch(function(error) {
+            container.innerHTML = '<div class="error-message">Failed to get suggestions</div>';
+        });
+    }
+    
+    window.getAISuggestions = getAISuggestions;
+    
+    function addSuggestion(title) {
+        var data = {
+            title: title,
+            description: '',
+            category: 'personal',
+            frequency: 1,
+            color: '#6366f1',
+            icon: '⭐'
+        };
+        
+        fetch('/habits/create', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(function(response) {
+            if (response.ok) {
+                location.reload();
+            }
+        })
+        .catch(function(error) {
+            console.error('Error adding suggestion:', error);
+        });
+    }
+    
+    function checkReminders() {
+        fetch('/api/upcoming_reminders?minutes=60')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            var container = document.getElementById('reminders-list');
+            
+            if (data.length === 0) {
+                container.innerHTML = 'No upcoming reminders in the next hour';
+            } else {
+                container.innerHTML = '';
+                data.forEach(function(r) {
+                    var div = document.createElement('div');
+                    div.className = 'reminder-item';
+                    div.innerHTML = '<div class="reminder-title">' + r.title + '</div><div class="reminder-time">In ' + Math.max(0, r.minutes) + ' minutes</div>';
+                    container.appendChild(div);
+                });
+                
+                if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+                    data.forEach(function(r) {
+                        new Notification('Reminder: ' + r.title, {
+                            body: 'Coming up in ' + Math.max(0, r.minutes) + ' minutes',
+                            icon: '/static/icons/icon-192.png'
+                        });
+                    });
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('Failed to check reminders:', error);
+        });
+    }
+    
+    window.checkReminders = checkReminders;
+    
+    function exportData() {
+        location.href = '{{ url_for("export_csv") }}';
+    }
+    
+    window.exportData = exportData;
+    
+    var habitCards = document.querySelectorAll('.habit-card');
+    habitCards.forEach(function(card) {
+        card.addEventListener('click', function() {
+            var habitId = this.getAttribute('data-habit-id');
+            location.href = '/habits/' + habitId;
+        });
+    });
+    
+    var suggestionCards = document.querySelectorAll('.suggestion-card');
+    suggestionCards.forEach(function(card) {
+        card.addEventListener('click', function() {
+            var suggestion = this.getAttribute('data-suggestion');
+            addSuggestion(suggestion);
+        });
+    });
+    
+    setInterval(checkReminders, 60000);
+})();
+</script>
+{% endblock %}

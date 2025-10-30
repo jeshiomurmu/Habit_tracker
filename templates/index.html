@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitFlow - Build Better Habits</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .hero-section {
+            color: white;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 24px;
+        }
+        
+        .features {
+            list-style: none;
+            margin-top: 32px;
+        }
+        
+        .features li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+        
+        .features li::before {
+            content: "✓";
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-weight: 600;
+        }
+        
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            border: none;
+            background: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: #6366f1;
+            border-bottom-color: #6366f1;
+        }
+        
+        .form-container {
+            display: none;
+        }
+        
+        .form-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #0f172a;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+        
+        .form-group input::placeholder {
+            color: #94a3b8;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(99,102,241,0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-section {
+                text-align: center;
+            }
+            
+            .hero-title {
+                font-size: 36px;
+            }
+            
+            .auth-container {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero-section">
+            <div class="logo">⭐</div>
+            <h1 class="hero-title">HabitFlow</h1>
+            <p class="hero-subtitle">Build better habits, one day at a time. Track your progress with AI-powered insights.</p>
+            
+            <ul class="features">
+                <li>AI-Powered Habit Suggestions</li>
+                <li>Beautiful Analytics Dashboard</li>
+                <li>Streak Tracking & Reminders</li>
+                <li>100% Free Forever</li>
+            </ul>
+        </div>
+        
+        <div class="auth-container">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('login')">Sign In</button>
+                <button class="tab" onclick="switchTab('register')">Sign Up</button>
+            </div>
+            
+            <div id="error-message" class="error-message"></div>
+            <div id="success-message" class="success-message"></div>
+            
+            <div id="login-form" class="form-container active">
+                <form onsubmit="handleLogin(event)">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="form_type" value="login">
+                    
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" required placeholder="Enter your username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" required placeholder="Enter your password">
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" name="remember" id="remember">
+                        <label for="remember" style="margin: 0;">Remember me</label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                </form>
+            </div>
+            
+            <div id="register-form" class="form-container">
+                <form onsubmit="handleRegister(event)">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="form_type" value="register">
+                    
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" required placeholder="Choose a username" minlength="3">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email (Optional)</label>
+                        <input type="email" name="email" placeholder="your@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" required placeholder="Create a password" minlength="6">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Profile Type</label>
+                        <select name="profile" required>
+                            <option value="normal">Personal</option>
+                            <option value="student">Student</option>
+                            <option value="businessman">Professional</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(tab) {
+            var tabs = document.querySelectorAll('.tab');
+            tabs.forEach(function(t) {
+                t.classList.remove('active');
+            });
+            
+            var forms = document.querySelectorAll('.form-container');
+            forms.forEach(function(f) {
+                f.classList.remove('active');
+            });
+            
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('login-form').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('register-form').classList.add('active');
+            }
+            
+            hideMessages();
+        }
+        
+        function showError(message) {
+            var errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            
+            setTimeout(function() {
+                errorDiv.classList.remove('show');
+            }, 5000);
+        }
+        
+        function showSuccess(message) {
+            var successDiv = document.getElementById('success-message');
+            successDiv.textContent = message;
+            successDiv.classList.add('show');
+            
+            setTimeout(function() {
+                successDiv.classList.remove('show');
+            }, 3000);
+        }
+        
+        function hideMessages() {
+            document.getElementById('error-message').classList.remove('show');
+            document.getElementById('success-message').classList.remove('show');
+        }
+        
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            var form = event.target;
+            var formData = new FormData(form);
+            
+            fetch('/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) {
+                return response.json().then(function(data) {
+                    return { status: response.status, data: data };
+                });
+            })
+            .then(function(result) {
+                if (result.status === 200 && result.data.success) {
+                    showSuccess('Login successful! Redirecting...');
+                    setTimeout(function() {
+                        window.location.href = result.data.redirect;
+                    }, 1000);
+                } else {
+                    showError(result.data.error || 'Login failed. Please try again.');
+                }
+            })
+            .catch(function(error) {
+                showError('An error occurred. Please try again.');
+                console.error('Error:', error);
+            });
+        }
+        
+        function handleRegister(event) {
+            event.preventDefault();
+            
+            var form = event.target;
+            var formData = new FormData(form);
+            
+            fetch('/', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) {
+                return response.json().then(function(data) {
+                    return { status: response.status, data: data };
+                });
+            })
+            .then(function(result) {
+                if (result.status === 200 && result.data.success) {
+                    showSuccess('Account created! Please sign in.');
+                    setTimeout(function() {
+                        switchTab('login');
+                        form.reset();
+                    }, 1500);
+                } else {
+                    showError(result.data.error || 'Registration failed. Please try again.');
+                }
+            })
+            .catch(function(error) {
+                showError('An error occurred. Please try again.');
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
